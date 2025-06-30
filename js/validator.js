@@ -97,7 +97,8 @@ class EmailValidator {
         this.suspiciousDomains = new Set([
             'tempmail.org', '10minutemail.com', 'guerrillamail.com',
             'mailinator.com', 'throwaway.email', 'temp-mail.org',
-            'fakeinbox.com', 'maildrop.cc', 'sharklasers.com'
+            'fakeinbox.com', 'maildrop.cc', 'sharklasers.com',
+            'bltiwd.com'
         ]);
 
         // RBI Email Guidelines Patterns
