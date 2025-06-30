@@ -299,7 +299,8 @@ class EmailValidator {
     hasSuspiciousPatterns(email) {
         const suspiciousPatterns = [
             /test.*test/i, /fake.*fake/i, /temp.*temp/i,
-            /\d{10,}/i, /(.)\1{4,}/i, /admin.*admin/i
+            /\d{10,}/i, /(.)\1{4,}/i, /admin.*admin/i,
+            /^\d/ // Check if email starts with a number
         ];
         return suspiciousPatterns.some(pattern => pattern.test(email));
     }
