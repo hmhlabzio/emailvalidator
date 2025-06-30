@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Validator - Indian Banking Norms</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-envelope-check"></i> Email Validator</h1>
+            <p>Validate emails against Indian Banking Norms & Standards</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Mode Selector -->
+            <section class="mode-selector">
+                <div class="mode-tabs">
+                    <button class="mode-tab active" id="csvModeTab">
+                        <i class="fas fa-file-csv"></i> CSV Validation
+                    </button>
+                    <button class="mode-tab" id="singleModeTab">
+                        <i class="fas fa-envelope"></i> Single Email
+                    </button>
+                </div>
+            </section>
+
+            <!-- Single Email Validation Section -->
+            <section class="single-email-section" id="singleEmailSection" style="display: none;">
+                <div class="single-email-container">
+                    <h3><i class="fas fa-envelope-check"></i> Single Email Validation</h3>
+                    <p>Enter an email address to validate against Indian Banking Norms</p>
+                    
+                    <div class="email-input-group">
+                        <input type="email" id="singleEmailInput" placeholder="Enter email address (e.g., user@sbi.co.in)" maxlength="254">
+                        <button class="validate-single-btn" id="validateSingleBtn">
+                            <i class="fas fa-check-circle"></i> Validate Email
+                        </button>
+                    </div>
+                    
+                    <div class="single-result" id="singleResult" style="display: none;">
+                        <div class="result-header">
+                            <h4>Validation Result</h4>
+                            <button class="clear-btn" id="clearSingleBtn">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                        
+                        <div class="result-summary">
+                            <div class="result-status" id="singleStatus"></div>
+                            <div class="result-details">
+                                <div class="detail-item">
+                                    <span class="label">Email:</span>
+                                    <span class="value" id="singleEmailValue"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Banking Compliant:</span>
+                                    <span class="value" id="singleBankingValue"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Risk Level:</span>
+                                    <span class="value" id="singleRiskValue"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Domain:</span>
+                                    <span class="value" id="singleDomainValue"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="validation-details" id="singleValidationDetails">
+                            <h5>Detailed Validation Checks</h5>
+                            <div class="checks-grid" id="singleChecksGrid"></div>
+                        </div>
+                        
+                        <div class="error-details" id="singleErrorDetails" style="display: none;">
+                            <h5>Error Details</h5>
+                            <div class="error-list" id="singleErrorList"></div>
+                        </div>
+                        
+                        <div class="single-actions">
+                            <button class="action-btn copy-btn" id="copySingleBtn">
+                                <i class="fas fa-copy"></i> Copy Email
+                            </button>
+                            <button class="action-btn export-btn" id="exportSingleBtn">
+                                <i class="fas fa-download"></i> Export Result
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Upload CSV File</h3>
+                    <p>Drag & drop your CSV file here or click to browse</p>
+                    <p class="file-info">Supports single column or multi-column CSV files (Max 10MB)</p>
+                    <input type="file" id="csvFile" accept=".csv" hidden>
+                    <button class="browse-btn" onclick="document.getElementById('csvFile').click()">
+                        <i class="fas fa-folder-open"></i> Browse Files
+                    </button>
+                </div>
+                
+                <div class="file-preview" id="filePreview" style="display: none;">
+                    <h4><i class="fas fa-file-csv"></i> File Preview</h4>
+                    <div class="preview-info">
+                        <span id="fileName"></span>
+                        <span id="fileSize"></span>
+                        <span id="rowCount"></span>
+                    </div>
+                    <div class="preview-table-container">
+                        <table id="previewTable"></table>
+                    </div>
+                    <div class="column-selector" id="columnSelector" style="display: none;">
+                        <label for="emailColumn">Select Email Column:</label>
+                        <select id="emailColumn"></select>
+                    </div>
+                    <button class="validate-btn" id="validateBtn">
+                        <i class="fas fa-check-circle"></i> Start Validation
+                    </button>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <h3><i class="fas fa-spinner fa-spin"></i> Validating Emails...</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-info">
+                    <span id="progressText">0% Complete</span>
+                    <span id="processedCount">0 / 0 emails processed</span>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h3><i class="fas fa-chart-line"></i> Validation Results</h3>
+                    <div class="export-buttons">
+                        <button class="export-btn valid-only" id="exportValidBtn">
+                            <i class="fas fa-download"></i> Download Valid Emails
+                        </button>
+                        <button class="export-btn" id="exportAllBtn">
+                            <i class="fas fa-file-excel"></i> Download All Results
+                        </button>
+                        <button class="export-btn" id="exportInvalidBtn">
+                            <i class="fas fa-exclamation-triangle"></i> Download Invalid Emails
+                        </button>
+                        <button class="export-btn banking" id="exportBankingBtn">
+                            <i class="fas fa-university"></i> Download Banking Compliant
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics Dashboard -->
+                <div class="stats-dashboard">
+                    <div class="stat-card total">
+                        <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="stat-info">
+                            <h4 id="totalEmails">0</h4>
+                            <p>Total Emails</p>
+                        </div>
+                    </div>
+                    <div class="stat-card valid">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h4 id="validEmails">0</h4>
+                            <p>Valid Emails</p>
+                        </div>
+                    </div>
+                    <div class="stat-card invalid">
+                        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                        <div class="stat-info">
+                            <h4 id="invalidEmails">0</h4>
+                            <p>Invalid Emails</p>
+                        </div>
+                    </div>
+                    <div class="stat-card banking">
+                        <div class="stat-icon"><i class="fas fa-university"></i></div>
+                        <div class="stat-info">
+                            <h4 id="bankingCompliant">0</h4>
+                            <p>Banking Compliant</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="results-table-container">
+                    <div class="table-controls">
+                        <div class="filter-controls">
+                            <select id="statusFilter">
+                                <option value="all">All Emails</option>
+                                <option value="valid">Valid Only</option>
+                                <option value="invalid">Invalid Only</option>
+                                <option value="banking">Banking Compliant</option>
+                            </select>
+                            <input type="text" id="searchInput" placeholder="Search emails...">
+                        </div>
+                        <div class="pagination-info">
+                            <span id="paginationInfo">Showing 0 - 0 of 0 results</span>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="results-table" id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th>Email Address</th>
+                                    <th>Status</th>
+                                    <th>Banking Compliant</th>
+                                    <th>Error Details</th>
+                                    <th>Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Email Validator - Indian Banking Norms Compliance Tool</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="js/validator.js"></script>
+    <script src="js/csvParser.js"></script>
+    <script src="js/exportUtils.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
